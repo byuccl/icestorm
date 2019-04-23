@@ -670,6 +670,27 @@ class iceconfig:
         if netname == "lutff_7/cout" and y+1 < self.max_y:
             neighbours.add((x, y+1, "carry_in"))
 
+        #RADDR cascade       
+        match = re.match(r"ram/cascade_RADDR_(\d+)_t_to_b", netname)
+        if match:
+            neighbours.add((x, y-1, "ram/RADDR_" + match.group(1)))
+        match = re.match(r"ram/cascade_RADDR_(\d+)_neigh", netname)
+        if match and (y + 1) < self.max_y:
+            neighbours.add((x, y+1, "ram/RADDR_" + match.group(1)))
+        match = re.match(r"ram/RADDR_(\d+)$", netname)
+        if match:
+            neighbours.add((x, y+1, "ram/cascade_RADDR_" + match.group(1) + "_t_to_b"))
+            if y-1 > 0:
+                neighbours.add((x, y-1, "ram/cascade_RADDR_" + match.group(1) + "_neigh"))
+
+        #WADDR cascade
+        match = re.match(r"ram/cascade_WADDR_(\d+)_neigh", netname)
+        if match and (y+2) < self.max_y:
+            neighbours.add((x, y+2, "ram/WADDR_" + match.group(1)))
+        match = re.match(r"ram/WADDR_(\d+)$", netname)
+        if match and (y-2) > 0:
+            neighbours.add((x, y-2, "ram/cascade_WADDR_" + match.group(1) + "_neigh"))
+
         if netname.startswith("glb_netwk_"):
             for nx in range(self.max_x+1):
                 for ny in range(self.max_y+1):
