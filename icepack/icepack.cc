@@ -112,6 +112,7 @@ struct FpgaConfig
 	// bram[BANK][X][Y]
 	int bram_width, bram_height;
 	vector<vector<vector<bool>>> bram;
+        bool skip_bram_initialization;
 
 	// data before preamble
 	vector<uint8_t> initblop;
@@ -324,7 +325,7 @@ void FpgaConfig::read_bits(std::istream &ifs)
 				end_token = read_byte(ifs, crc_value, file_offset);
 				end_token = (end_token << 8) | read_byte(ifs, crc_value, file_offset);
 				if (end_token)
-					error("Expeded 0x0000 after BRAM data, got 0x%04x\n", end_token);
+					error("Expected 0x0000 after BRAM data, got 0x%04x\n", end_token);
 				break;
 
 			case 0x05:
@@ -579,18 +580,20 @@ void FpgaConfig::write_bits(std::ostream &ofs) const
 				}
 
 
-				debug("BRAM: Writing bank %d data.\n", bram_bank);
-				write_byte(ofs, crc_value, file_offset, 0x01);
-				write_byte(ofs, crc_value, file_offset, 0x03);
-				for (int i = 0; i < int(bram_bits.size()); i += 8) {
-					uint8_t byte = 0;
-					for (int j = 0; j < 8; j++)
-						byte = (byte << 1) | (bram_bits[i+j] ? 1 : 0);
-					write_byte(ofs, crc_value, file_offset, byte);
-				}
+                                if (!this->skip_bram_initialization) {
+                                    debug("BRAM: Writing bank %d data.\n", bram_bank);
+                                    write_byte(ofs, crc_value, file_offset, 0x01);
+                                    write_byte(ofs, crc_value, file_offset, 0x03);
+                                    for (int i = 0; i < int(bram_bits.size()); i += 8) {
+                                            uint8_t byte = 0;
+                                            for (int j = 0; j < 8; j++)
+                                                    byte = (byte << 1) | (bram_bits[i+j] ? 1 : 0);
+                                            write_byte(ofs, crc_value, file_offset, byte);
+                                    }
 
-				write_byte(ofs, crc_value, file_offset, 0x00);
-				write_byte(ofs, crc_value, file_offset, 0x00);
+                                    write_byte(ofs, crc_value, file_offset, 0x00);
+                                    write_byte(ofs, crc_value, file_offset, 0x00);
+                                }
 			}
 		}
 	}
@@ -909,7 +912,7 @@ void FpgaConfig::write_ascii(std::ostream &ofs) const
 			ofs << '\n';
 		}
 
-		if (cic.tile_type == "ramb")
+		if (cic.tile_type == "ramb" && !this->bram.empty())
 		{
 			BramIndexConverter bic(this, x, y);
 			ofs << stringf(".ram_data %d %d\n", x, y);
@@ -1348,6 +1351,9 @@ void usage()
 	log("    -B0, -B1, -B2, -B3\n");
 	log("        only include the specified bank in the netpbm file\n");
 	log("\n");
+	log("    -n\n");
+	log("        skip initializing BRAM\n");
+	log("\n");
 	exit(1);
 }
 
@@ -1372,6 +1378,7 @@ int main(int argc, char **argv)
 	bool netpbm_bram = false;
 	bool netpbm_fill_tiles = false;
 	bool netpbm_checkerboard = false;
+        bool skip_bram_initialization = false;
 	int netpbm_banknum = -1;
 	int checkerboard_m = 1;
 
@@ -1406,6 +1413,8 @@ int main(int argc, char **argv)
 					nosleep_mode = true;
 				} else if (arg[i] == 'v') {
 					log_level++;
+				} else if (arg[i] == 'n') {
+					skip_bram_initialization = true;
 				} else
 					usage();
 			continue;
@@ -1442,6 +1451,8 @@ int main(int argc, char **argv)
 		usage();
 
 	FpgaConfig fpga_config;
+        
+        fpga_config.skip_bram_initialization = skip_bram_initialization;
 
 	if (unpack_mode) {
 		fpga_config.read_bits(*isp);
