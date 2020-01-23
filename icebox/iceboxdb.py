@@ -8155,6 +8155,28 @@ B1[7]	RamConfig	CBIT_0
 B0[7]	RamConfig	CBIT_1
 B3[7]	RamConfig	CBIT_2
 B2[7]	RamConfig	CBIT_3
+B7[7]	buffer	ram/cascade_RADDR_0_neigh	ram/cascade_RADDR_0_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_1_neigh	ram/cascade_RADDR_1_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_2_neigh	ram/cascade_RADDR_2_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_3_neigh	ram/cascade_RADDR_3_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_4_neigh	ram/cascade_RADDR_4_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_5_neigh	ram/cascade_RADDR_5_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_6_neigh	ram/cascade_RADDR_6_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_7_neigh	ram/cascade_RADDR_7_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_8_neigh	ram/cascade_RADDR_8_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_9_neigh	ram/cascade_RADDR_9_t_to_b
+B7[7]	buffer	ram/cascade_RADDR_10_neigh	ram/cascade_RADDR_10_t_to_b
+B5[7]	buffer	ram/cascade_WADDR_0_neigh	ram/WADDR_0
+B5[7]	buffer	ram/cascade_WADDR_1_neigh	ram/WADDR_1
+B5[7]	buffer	ram/cascade_WADDR_2_neigh	ram/WADDR_2
+B5[7]	buffer	ram/cascade_WADDR_3_neigh	ram/WADDR_3
+B5[7]	buffer	ram/cascade_WADDR_4_neigh	ram/WADDR_4
+B5[7]	buffer	ram/cascade_WADDR_5_neigh	ram/WADDR_5
+B5[7]	buffer	ram/cascade_WADDR_6_neigh	ram/WADDR_6
+B5[7]	buffer	ram/cascade_WADDR_7_neigh	ram/WADDR_7
+B5[7]	buffer	ram/cascade_WADDR_8_neigh	ram/WADDR_8
+B5[7]	buffer	ram/cascade_WADDR_9_neigh	ram/WADDR_9
+B5[7]	buffer	ram/cascade_WADDR_10_neigh	ram/WADDR_10
 B8[14],B9[14],!B9[15],!B9[16],B9[17]	buffer	bnl_op_0	lc_trk_g2_0
 B12[14],B13[14],!B13[15],!B13[16],B13[17]	buffer	bnl_op_0	lc_trk_g3_0
 !B8[15],!B8[16],B8[17],B8[18],B9[18]	buffer	bnl_op_1	lc_trk_g2_1

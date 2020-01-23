@@ -353,6 +353,12 @@ for segs in sorted(ic.group_segments(extra_connections=extra_connections, extra_
         if re_match_cached(r"lutff_./out", s[2]): count_drivers.append(s[2])
         if re_match_cached(r"lutff_./lout", s[2]): count_drivers.append(s[2])
 
+    # Handle constant GND outputs
+    # Segments that only connect from IO/D_OUT to IO/PAD, with no driver for IO/D_OUT are default driven by GND
+    if len(segs) == 2 and re.match(r"io_./D_OUT_", segs[0][2]) and re.match(r"io_./PAD", segs[1][2]):
+         text_func.append("assign %s = %s;" % (n, "1'b0"))
+         count_drivers.append("1'b0")
+
     if len(count_drivers) != 1 and check_driver:
         failed_drivers_check.append((n, count_drivers))
 
